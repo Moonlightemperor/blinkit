@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blinkit Live Route</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        #map {
+            width: 100%;
+            height: calc(100vh - 56px);
+        }
+
+        #inputs {
+            pointer-events: auto;
+        }
+
+        /* Suggestion dropdown */
+        .autocomplete-suggestions {
+            border: 1px solid #e5e7eb;
+            max-height: 190px;
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+        }
+
+        .autocomplete-suggestion {
+            padding: 10px 12px;
+            cursor: pointer;
+            color: #111827;
+            font-size: 13px;
+        }
+
+        .autocomplete-suggestion:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Ensure the overlay card stays above Leaflet UI */
+        .leaflet-container {
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <header
+        class="sticky top-0 z-[1000] bg-white/80 backdrop-blur border-b border-gray-100 flex items-center">
+        <div class="max-w-7xl mx-auto px-4 py-3 w-full flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+                    <i class="ri-route-line text-emerald-700 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-semibold text-gray-900">Live delivery route</h1>
+                    <p class="text-xs text-gray-500">GPS tracking + destination route</p>
+                </div>
+            </div>
+            <a href="/" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 px-3 py-2 rounded-full transition">
+                Home
+            </a>
+        </div>
+    </header>
+
+    <!-- Inputs overlay -->
+    <div id="inputs"
+        class="absolute z-[2000] top-16 left-4 right-4 sm:left-6 sm:right-auto sm:w-[420px] max-w-full">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="p-4 border-b border-gray-100">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Set destination</p>
+                        <p class="text-xs text-gray-500 mt-1">Click a suggestion to draw the route</p>
+                    </div>
+                    <span id="gpsStatus"
+                        class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-full">
+                        Getting GPS...
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <form method="post" action="/order/address/<%= orderid %>" class="space-y-3">
+                    <div class="space-y-1">
+                        <label for="end" class="text-xs font-semibold text-gray-700">Destination</label>
+                        <div class="relative">
+                            <input type="text" name="address" id="end" placeholder="Enter destination"
+                                class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" />
+                            <div id="suggestions" class="autocomplete-suggestions hidden mt-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit"
+                            class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2.5 rounded-xl transition text-sm">
+                            Get order
+                        </button>
+                        <button id="clearBtn" type="button"
+                            class="px-3 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition text-sm">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+
+                <p class="text-xs text-gray-500 mt-3">
+                    Tip: If route doesn't show, make sure GPS is enabled and select a suggestion.
+                </p>
+                
+                <div id="successMessage" class="hidden mt-3 p-3 bg-green-50 border border-green-200 rounded-xl">
+                    <p class="text-xs text-green-700 font-medium"> Address updated successfully! Redirecting...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        let startLatLng, endLatLng;
+        let userMarker;
+
+        // Initialize the map
+        const map = L.map('map').setView([20.5937, 78.9629], 5); // Centered on India as an example
+
+        // Load and display the tile layer on the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        const gpsStatus = document.getElementById('gpsStatus');
+        const successMessage = document.getElementById('successMessage');
+
+        // Track the user's location in real-time
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(position => {
+                startLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+
+                gpsStatus.textContent = "GPS active";
+
+                // Update the marker for the user's current location
+                if (userMarker) {
+                    userMarker.setLatLng(startLatLng).update();
+                } else {
+                    userMarker = L.marker(startLatLng).addTo(map)
+                        .bindPopup("You are here").openPopup();
+                }
+
+                // Center the map on the new location
+                map.setView(startLatLng, 13);
+
+                // If user already selected a destination, refresh route as GPS updates
+                if (endLatLng) generateRoute();
+            }, error => {
+                console.error("Error watching position:", error);
+                gpsStatus.textContent = "GPS unavailable";
+                gpsStatus.classList.remove("text-emerald-700", "bg-emerald-50", "border-emerald-100");
+                gpsStatus.classList.add("text-rose-700", "bg-rose-50", "border-rose-100");
+            }, {
+                enableHighAccuracy: true,
+                timeout: 30000,
+                maximumAge: 0
+            });
+        } else {
+            gpsStatus.textContent = "Geolocation not supported";
+        }
+
+        // Set up the geocoder for destination input
+        const endInput = document.getElementById('end');
+        const suggestionsContainer = document.getElementById('suggestions');
+        const clearBtn = document.getElementById('clearBtn');
+
+        function setSuggestionsVisibility(visible) {
+            if (visible) suggestionsContainer.classList.remove('hidden');
+            else suggestionsContainer.classList.add('hidden');
+        }
+
+        let geocodeTimer;
+        endInput.addEventListener('input', function () {
+            const query = endInput.value.trim();
+            if (!query) {
+                suggestionsContainer.innerHTML = '';
+                setSuggestionsVisibility(false);
+                endLatLng = undefined;
+                return;
+            }
+
+            // Basic debounce to reduce requests
+            clearTimeout(geocodeTimer);
+            geocodeTimer = setTimeout(() => {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=in`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(results => {
+                        suggestionsContainer.innerHTML = '';
+
+                        if (!results || results.length === 0) {
+                            setSuggestionsVisibility(false);
+                            return;
+                        }
+
+                        results.forEach(function (result) {
+                            const suggestionItem = document.createElement('div');
+                            suggestionItem.className = 'autocomplete-suggestion';
+                            suggestionItem.innerText = result.display_name;
+                            suggestionItem.addEventListener('click', function () {
+                                endInput.value = result.display_name;
+                                endLatLng = L.latLng(parseFloat(result.lat), parseFloat(result.lon));
+                                suggestionsContainer.innerHTML = '';
+                                setSuggestionsVisibility(false);
+                                generateRoute();
+                            });
+                            suggestionsContainer.appendChild(suggestionItem);
+                        });
+
+                        setSuggestionsVisibility(true);
+                    })
+                    .catch(error => {
+                        console.error('Geocoding error:', error);
+                        suggestionsContainer.innerHTML = '<div class="autocomplete-suggestion text-gray-500">Unable to fetch suggestions</div>';
+                        setSuggestionsVisibility(true);
+                    });
+            }, 350);
+        });
+
+        clearBtn.addEventListener('click', function () {
+            endInput.value = '';
+            endLatLng = undefined;
+            suggestionsContainer.innerHTML = '';
+            setSuggestionsVisibility(false);
+            if (window.routingControl) {
+                map.removeControl(window.routingControl);
+            }
+        });
+
+        // Function to generate a route between two locations
+        function generateRoute() {
+            if (!startLatLng || !endLatLng) return;
+
+            // Remove any existing routing control
+            if (window.routingControl) {
+                map.removeControl(window.routingControl);
+            }
+
+            // Add the new routing control with the specified waypoints
+            window.routingControl = L.Routing.control({
+                waypoints: [
+                    startLatLng,
+                    endLatLng
+                ],
+                routeWhileDragging: true,
+                addWaypoints: false,
+                draggableWaypoints: false,
+                showAlternatives: false,
+                altLineOptions: { styles: [{ color: '#9ca3af', opacity: 0.4, weight: 3 }] }
+            }).addTo(map);
+        }
+
+        // Handle form submission with better feedback
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            if (!endInput.value.trim()) {
+                alert('Please select a destination address');
+                return;
+            }
+            
+            // Show success message
+            successMessage.classList.remove('hidden');
+            
+            // Submit the form
+            this.submit();
+        });
+    </script>
+</body>
+
+</html>

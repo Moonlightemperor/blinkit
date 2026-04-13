@@ -1,0 +1,17 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-gray-100 min-h-screen font-sans">
+    <div class="max-w-md mx-auto px-4 pt-12 pb-8 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 mb-6">
+            <i class="ri-error-warning-line text-3xl text-amber-600"></i>
+        </div>
+        <h1 class="text-xl font-bold text-gray-900"><%= typeof title !== 'undefined' ? title : 'Something went wrong' %></h1>
+        <p class="mt-3 text-gray-600 text-sm leading-relaxed"><%= typeof message !== 'undefined' ? message : '' %></p>
+        <a href="/"
+            class="inline-block mt-8 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition">
+            Back to home
+        </a>
+    </div>
+</body>
+
+<%- include('./partials/footer'); %>

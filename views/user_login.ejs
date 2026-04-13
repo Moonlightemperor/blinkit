@@ -1,0 +1,67 @@
+<%- include('./partials/header'); %>
+
+<body class="min-h-screen w-screen flex items-center justify-center bg-gradient-to-b from-emerald-50 via-slate-50 to-gray-100">
+  <div class="w-full max-w-4xl px-4">
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col md:flex-row">
+      <!-- Left: brand + image -->
+      <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 text-white p-6 flex-col justify-between">
+        <div class="space-y-3">
+          <h2 class="text-2xl font-bold tracking-tight">Blinkit</h2>
+          <p class="text-sm text-emerald-50">Instant groceries, delivered in minutes.</p>
+        </div>
+        <div class="mt-4 flex-1 flex items-center justify-center">
+          <div class="relative w-full max-w-xs aspect-[4/5] rounded-2xl overflow-hidden shadow-lg border border-emerald-300/40 bg-emerald-700/30">
+            <img src="/images/blinkit.png" alt="Blinkit preview"
+              class="w-full h-full object-contain" />
+          </div>
+        </div>
+        <div class="mt-6 space-y-2 text-xs text-emerald-100">
+          <p class="flex items-center gap-2">
+            <i class="ri-time-flash-line text-base"></i>
+            <span>Reorder your favourites in a single tap.</span>
+          </p>
+          <p class="flex items-center gap-2">
+            <i class="ri-shield-check-line text-base"></i>
+            <span>Secure Google sign-in · Demo project.</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: login content -->
+      <div class="w-full md:w-1/2 p-7 sm:p-8 flex flex-col justify-center">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-11 w-11 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+            <i class="ri-user-smile-line text-emerald-700 text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">Welcome back</h1>
+            <p class="text-sm text-gray-500 mt-1">Sign in to continue shopping on Blinkit.</p>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 mb-5">
+          <p class="text-sm text-gray-800">
+            Use your Google account for a quick, one-tap login.
+          </p>
+          <p class="text-xs text-gray-500 mt-1.5">
+            We only access basic profile details (name, email) for this demo app.
+          </p>
+        </div>
+
+        <a href="/auth/google"
+          class="block w-full text-center bg-black text-white font-semibold py-3.5 px-4 rounded-xl hover:bg-black/90 transition shadow-sm">
+          <span class="inline-flex items-center justify-center gap-2">
+            <i class="ri-google-fill text-lg"></i>
+            Continue with Google
+          </span>
+        </a>
+
+        <p class="mt-4 text-center text-[11px] text-gray-500">
+          By continuing, you agree to Blinkit's Terms & Privacy Policy.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+
+<%- include('./partials/footer'); %>

@@ -1,0 +1,233 @@
+<%- include('./partials/header'); %>
+
+    <style>
+        .swiper-container {
+            width: 100%;
+            max-width: 640px;
+            position: relative;
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 200px;
+        }
+
+        .swiper-pagination {
+            bottom: 10px !important;
+        }
+
+        .swiper-pagination-bullet {
+            background-color: #059669;
+            opacity: 0.35;
+        }
+
+        .swiper-pagination-bullet-active {
+            background-color: #059669;
+            opacity: 1;
+        }
+    </style>
+
+    <body class="bg-gradient-to-b from-emerald-50 via-slate-50 to-gray-100 font-sans antialiased">
+        <div class="max-w-5xl mx-auto px-4 py-4 space-y-6">
+            <!-- Top bar -->
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900">Blinkit</h1>
+                    <p class="text-xs text-gray-500">Groceries delivered in minutes</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="hidden sm:inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50">
+                        <i class="ri-map-pin-line text-base text-emerald-600"></i>
+                        <span>Change location</span>
+                    </button>
+                    <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                        <a href="/cart"
+                            class="relative inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-full shadow-md hover:bg-emerald-700">
+                            <i class="ri-shopping-cart-2-line mr-2 text-lg"></i>
+                            Cart
+                            <span
+                                class="ml-2 inline-flex items-center justify-center w-5 h-5 text-[11px] font-bold bg-white text-emerald-700 rounded-full">
+                                <%= cartCount %>
+                            </span>
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-3 flex items-center gap-3">
+                <i class="ri-search-line text-gray-400 text-lg"></i>
+                <input type="text" placeholder="Search for atta, milk, snacks and more"
+                    class="w-full text-sm border-none outline-none focus:ring-0 placeholder:text-gray-400" />
+            </div>
+
+            <!-- Order Now carousel -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-base font-semibold text-gray-900">Order now</h2>
+                    <button class="text-xs font-medium text-emerald-700 hover:text-emerald-800">See all</button>
+                </div>
+                <div class="flex gap-4 overflow-x-auto pb-1">
+                    <% rnproducts.forEach(function(elem){ %>
+                        <div
+                            class="min-w-[8rem] max-w-[8rem] flex-shrink-0 bg-gray-50 rounded-xl p-3 border border-gray-100 hover:border-emerald-500 transition">
+                            <div class="relative">
+                                <img src="data:image/jpg;base64, <%= elem.image.toString('base64') %>"
+                                    alt="<%= elem.name %>" class="h-24 w-full object-cover rounded-lg">
+                            </div>
+                            <p class="mt-2 text-xs font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">
+                                <%= elem.name %>
+                            </p>
+                            <p class="mt-1 text-[11px] text-gray-400 line-through">₹<%= Number(elem.price)+20 %></p>
+                            <p class="text-sm font-semibold text-gray-900">₹<%= elem.price %></p>
+                            <a href="/cart/add/<%= elem._id %>"
+                                class="mt-2 block w-full text-center text-[11px] font-semibold text-white bg-emerald-600 rounded-full py-1.5 hover:bg-emerald-700">
+                                ADD
+                            </a>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <!-- Offers Section -->
+            <section class="bg-transparent">
+                <div class="swiper-container my-4 w-full overflow-hidden rounded-2xl shadow-md">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div
+                                class="w-full h-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white flex items-center px-6">
+                                <div class="space-y-1">
+                                    <p class="text-xs uppercase tracking-wide opacity-80">Limited time</p>
+                                    <h3 class="text-lg font-semibold">Flat 20% off on snacks</h3>
+                                    <p class="text-xs opacity-90">Stock up on chips, namkeen, biscuits and more.</p>
+                                </div>
+                                <img class="ml-auto h-24 hidden sm:block object-contain"
+                                    src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=280/layout-engine/2023-07/pharmacy-WEB.jpg"
+                                    alt="">
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div
+                                class="w-full h-full bg-gradient-to-r from-amber-500 to-orange-500 text-white flex items-center px-6">
+                                <div class="space-y-1">
+                                    <p class="text-xs uppercase tracking-wide opacity-80">Dairy essentials</p>
+                                    <h3 class="text-lg font-semibold">Fresh milk & bread under 10 min</h3>
+                                    <p class="text-xs opacity-90">Daily breakfast items delivered to your doorstep.</p>
+                                </div>
+                                <img class="ml-auto h-24 hidden sm:block object-contain"
+                                    src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=280/layout-engine/2023-07/Pet-Care_WEB.jpg"
+                                    alt="">
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div
+                                class="w-full h-full bg-gradient-to-r from-sky-500 to-indigo-500 text-white flex items-center px-6">
+                                <div class="space-y-1">
+                                    <p class="text-xs uppercase tracking-wide opacity-80">Household picks</p>
+                                    <h3 class="text-lg font-semibold">Up to 30% off on cleaners</h3>
+                                    <p class="text-xs opacity-90">Everything you need to keep your home sparkling.</p>
+                                </div>
+                                <img class="ml-auto h-24 hidden sm:block object-contain"
+                                    src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=280/layout-engine/2023-07/pharmacy-WEB.jpg"
+                                    alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
+
+            <!-- Grocery & Kitchen Section -->
+            <div class="space-y-6">
+                <% for(let key in products){ %>
+                    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-base font-semibold text-gray-900 capitalize">
+                                <%= key %>
+                            </h2>
+                            <span class="text-[11px] text-gray-400 uppercase tracking-wide">
+                                Top picks for you
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <% products[key].forEach(elem=>{ %>
+                                <div
+                                    class="group bg-gray-50 rounded-xl p-3 border border-gray-100 hover:border-emerald-500 hover:bg-white transition flex flex-col">
+                                    <img src="data:image/jpg;base64, <%= elem.image.toString('base64') %>"
+                                        alt="<%= elem.name %>" class="w-full h-24 object-contain rounded-lg mb-2">
+                                    <p class="text-xs font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">
+                                        <%= elem.name %>
+                                    </p>
+                                    <p class="mt-1 text-[11px] text-gray-400">~ 1 unit</p>
+                                    <div class="mt-2 flex items-center justify-between">
+                                        <div>
+                                            <p class="text-[11px] text-gray-400 line-through">₹<%= Number(elem.price)+15 %></p>
+                                            <p class="text-sm font-semibold text-gray-900">₹<%= elem.price %></p>
+                                        </div>
+                                        <a href="/cart/add/<%= elem._id %>"
+                                            class="px-3 py-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 rounded-full group-hover:bg-emerald-600 group-hover:text-white transition">
+                                            ADD
+                                        </a>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </section>
+                <% } %>
+            </div>
+
+            <% if(somethingInCart){ %>
+                <div class="h-24"></div>
+                <!-- Bottom cart summary -->
+                <div
+                    class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur shadow-[0_-6px_20px_rgba(15,23,42,0.18)] border-t border-gray-100">
+                    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">
+                                <%= cartCount %> item<%= cartCount > 1 ? 's' : '' %> in cart
+                            </p>
+                            <p class="text-[11px] text-gray-500">
+                                Get FREE delivery on higher order value
+                            </p>
+                        </div>
+                        <a href="/cart"
+                            class="inline-flex items-center justify-center px-10 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-full shadow-md hover:bg-emerald-700">
+                            Go to cart
+                            <i class="ri-arrow-right-s-line text-lg ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+        <script>
+            var swiper = new Swiper('.swiper-container', {
+                loop: true,
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        </script>
+        <script>
+            window.addEventListener('scroll', function () {
+                localStorage.setItem('scrollPosition', window.scrollY);
+            });
+            window.addEventListener('load', function () {
+                const scrollPosition = localStorage.getItem('scrollPosition');
+                if (scrollPosition) {
+                    window.scrollTo(0, scrollPosition);
+                }
+            });
+        </script>
+    </body>
+    <%- include('./partials/footer'); %>

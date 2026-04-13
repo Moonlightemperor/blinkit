@@ -1,0 +1,349 @@
+<%- include('./partials/header'); %>
+
+    <body class="bg-gray-100 font-sans antialiased">
+        <div class="max-w-screen-md mx-auto p-4 space-y-4 pb-40">
+            <!-- Header -->
+            <div class="flex justify-between items-center py-4">
+                <a href="/" class="text-lg text-gray-600 hover:text-gray-800"><i class="ri-arrow-left-s-line"></i></a>
+                <h1 class="text-xl font-semibold">Checkout</h1>
+                <button class="text-sm text-emerald-700 font-medium">Help</button>
+            </div>
+
+            <!-- Delivery Info -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-start gap-4">
+                    <i
+                        class="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-50 text-emerald-600 text-2xl ri-timer-line"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900">Delivery in
+                            <%= Math.floor((Math.random()*10)+3) %> minutes</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Shipment of <%= cart.length %> item<%= cart.length > 1 ? 's' : '' %></p>
+                    </div>
+                </div>
+                <div class="mt-4 space-y-3">
+                    <% cart.forEach(elem=> { %>
+                        <div
+                            class="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
+                            <img src="data:image/jpg;base64, <%= elem.product.image.toString('base64') %>"
+                                alt="<%= elem.product.name %>" class="w-14 h-14 rounded-lg object-cover">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900 line-clamp-2">
+                                    <%= elem.product.name %>
+                                </p>
+                                <p class="text-[11px] text-gray-400 mt-0.5">~ 1 unit</p>
+                                <p class="text-sm font-semibold text-gray-900 mt-1">
+                                    ₹<%= Number(elem.price)*Number(elem.quantity)%>
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <div class="flex items-center justify-center bg-emerald-50 text-emerald-700 rounded-full">
+                                    <a href="/cart/remove/<%= elem.product._id %>"
+                                        class="px-2 py-1 rounded-full hover:bg-emerald-100"><i
+                                            class="ri-subtract-line text-sm"></i></a>
+                                    <p class="mx-2 text-sm font-medium text-gray-900">
+                                        <%= elem.quantity %>
+                                    </p>
+                                    <button disabled
+                                        class="px-2 py-1 rounded-full opacity-40 cursor-not-allowed"><i
+                                            class="ri-add-line text-sm"></i></button>
+                                </div>
+                                <p class="text-[11px] text-gray-400 line-through">
+                                    ₹<%= Number(elem.price)*Number(elem.quantity)+20 %>
+                                </p>
+                            </div>
+                        </div>
+                    <% })%>
+                </div>
+            </div>
+
+            <!-- Before You Checkout -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">Before you checkout</h2>
+                        <p class="text-xs text-gray-500 mt-1">Recommended add-ons</p>
+                    </div>
+                    <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">
+                        Quick picks
+                    </span>
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3">
+                        <div class="h-20 flex items-center justify-center bg-white rounded-xl border border-gray-100 overflow-hidden">
+                            <img src="https://www.bigbasket.com/media/uploads/p/xxl/40015993_11-uncle-chips-spicy-treat.jpg"
+                                alt="Product Image" class="h-20 w-auto object-contain">
+                        </div>
+                        <p class="text-[11px] text-gray-800 font-medium mt-2 line-clamp-2">Uncle Chipps Spicy Treat Flavour Potato Chips</p>
+                        <p class="text-[11px] text-gray-500 mt-1">48 g</p>
+                        <div class="mt-3 flex items-center justify-between gap-3">
+                            <p class="text-sm font-bold text-gray-900">₹20</p>
+                            <button type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-3 py-1 rounded-xl">
+                                ADD
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3">
+                        <div class="h-20 flex items-center justify-center bg-white rounded-xl border border-gray-100 overflow-hidden">
+                            <img src="https://m.media-amazon.com/images/I/61mQ-Q7HmCL._AC_UF1000,1000_QL80_.jpg"
+                                alt="Product Image" class="h-20 w-auto object-contain">
+                        </div>
+                        <p class="text-[11px] text-gray-800 font-medium mt-2 line-clamp-2">Coca-Cola Soft Drink (300 ml)</p>
+                        <p class="text-[11px] text-gray-500 mt-1">300 ml</p>
+                        <div class="mt-3 flex items-center justify-between gap-3">
+                            <p class="text-sm font-bold text-gray-900">₹40</p>
+                            <button type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-3 py-1 rounded-xl">
+                                ADD
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3">
+                        <div class="h-20 flex items-center justify-center bg-white rounded-xl border border-gray-100 overflow-hidden">
+                            <img src="https://www.dorita.se/media/catalog/product/9/0/900179-lay-s-saltet-potetgull-175g.jpg"
+                                alt="Product Image" class="h-20 w-auto object-contain">
+                        </div>
+                        <p class="text-[11px] text-gray-800 font-medium mt-2 line-clamp-2">Chheda's Golden Banana Chips (Rock Salt)</p>
+                        <p class="text-[11px] text-gray-500 mt-1">170 g</p>
+                        <div class="mt-3 flex items-center justify-between gap-3">
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">₹85</p>
+                                <p class="text-[11px] text-red-500 mt-0.5">16% OFF</p>
+                            </div>
+                            <button type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-3 py-1 rounded-xl">
+                                ADD
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center text-white bg-gradient-to-r from-emerald-600 to-emerald-700 py-4 px-5 rounded-2xl border border-emerald-600">
+                    <h1 class="text-base font-bold">Get FREE delivery</h1>
+                    <p class="text-xs text-emerald-100 mt-0.5">Add products worth ₹236 more</p>
+                    <button type="button"
+                        class="text-sm bg-white/90 text-gray-900 px-6 py-2 rounded-xl font-semibold capitalize mt-3 hover:bg-white">
+                        See all coupons
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bill Details -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">Bill details</h2>
+                        <p class="text-xs text-gray-500 mt-1">Taxes & charges included</p>
+                    </div>
+                    <span class="text-[11px] font-semibold text-gray-600 bg-gray-50 border border-gray-100 px-3 py-1 rounded-full">
+                        INR
+                    </span>
+                </div>
+
+                <div class="mt-4 space-y-3">
+                    <div class="flex items-center justify-between text-sm">
+                        <p class="text-gray-600">Items total</p>
+                        <p class="text-gray-900 font-medium">₹<%= finalprice - 34 %></p>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <p class="text-gray-600">Delivery charge</p>
+                        <p class="text-gray-900 font-medium">₹30</p>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <p class="text-gray-600">Handling charge</p>
+                        <p class="text-gray-900 font-medium">₹4</p>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-3 flex items-end justify-between">
+                        <p class="text-gray-900 font-bold text-base">Grand total</p>
+                        <p class="text-gray-900 font-extrabold text-2xl">₹<%= finalprice %></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donation -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-start gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center overflow-hidden">
+                        <img src="https://b.zmtcdn.com/data/fi_assets/9fbf0569f69bfef7d190c5b892ab0a521619355737.png"
+                            alt="Feeding India" class="h-6 w-6 object-contain">
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="font-semibold text-gray-900">Feeding India donation</p>
+                            <span class="text-xs font-bold text-gray-900 bg-gray-50 border border-gray-100 px-3 py-1 rounded-full">
+                                ₹1
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                            Working towards a malnutrition free India. Feeding India...
+                            <span class="text-blue-500 font-semibold">read more</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Instructions -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">Delivery instructions</h2>
+                        <p class="text-xs text-gray-500 mt-1">Choose how the delivery should happen</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button type="button"
+                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
+                        <i class="ri-mic-line text-lg text-gray-700"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700">Record</p>
+                    </button>
+                    <button type="button"
+                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
+                        <i class="ri-prohibited-line text-lg text-gray-700"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700">Avoid calling</p>
+                    </button>
+                    <button type="button"
+                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
+                        <i class="ri-notification-off-line text-lg text-gray-700"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700">No bell</p>
+                    </button>
+                    <button type="button"
+                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
+                        <i class="ri-door-open-line text-lg text-gray-700"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700">Leave at door</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ordering for someone else -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mt-6 text-sm text-gray-700">
+                Ordering for someone else? <span class="text-emerald-700 font-medium">Add details</span>
+            </div>
+            <!-- Cancellation Policy -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-10 mt-6">
+                <div class="flex items-start gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center">
+                        <i class="ri-close-circle-line text-rose-600 text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900">Cancellation policy</p>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+                            Orders cannot be cancelled once packed for delivery. In case of unexpected delays, a refund will be
+                            provided, if applicable.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-white/95 backdrop-blur p-3 rounded-t-2xl shadow-[0_-4px_15px_rgba(15,23,42,0.16)] fixed bottom-0 inset-x-0 border-t border-gray-100">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Delivering to Home</p>
+                                <p class="text-sm text-gray-800 mt-1">
+                                    1st Floor M2, 132C Apex Builders Sector C Indrauri, saarthi...
+                                </p>
+                            </div>
+                            <button type="button" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 whitespace-nowrap">
+                                Change
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sm:w-[18rem] w-full">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Pay using</p>
+                                <p class="text-sm text-gray-800 mt-1 flex items-center gap-2">
+                                    <i class="ri-bank-card-line text-gray-500 text-base"></i>
+                                    Paytm UPI
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Total</p>
+                                <p class="text-2xl font-extrabold text-gray-900 mt-1">₹<%= finalprice %></p>
+                            </div>
+                        </div>
+
+                        <button class="paybtn mt-2 w-full bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm transition"
+                            type="button">
+                            Place Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        <script>
+            const cartData = <%- JSON.stringify(cart) %>;
+            
+            document.querySelector('.paybtn').onclick = function (e) {
+                console.log('Button clicked');
+                axios.post('/payment/create/order', { amount: <%= finalprice %> })
+                    .then(function (response) {
+                        var options = {
+                            "key": "<%= razorpayKeyId %>",
+                            "amount": response.data.order.amount, // Amount in currency subunits. Default currency is INR.
+                            "currency": response.data.order.currency,
+                            "name": "BlinkIt",
+                            "description": "Test Transaction",
+                            "image": "https://example.com/your_logo",
+                            "order_id": response.data.order.id,
+                            "handler": function (payResponse) {
+                                axios.post('/payment/api/payment/verify', {
+                                    razorpay_order_id: payResponse.razorpay_order_id,
+                                    razorpay_payment_id: payResponse.razorpay_payment_id,
+                                    razorpay_signature: payResponse.razorpay_signature,
+                                    amount: <%= finalprice %>,
+                                    cart: cartData
+                                })
+                                    .then(function (verifyRes) {
+                                        if (verifyRes.data && verifyRes.data.success) {
+                                            var oid = encodeURIComponent(payResponse.razorpay_order_id);
+                                            window.location.href = '/order/success/' + oid;
+                                        } else {
+                                            alert(verifyRes.data && verifyRes.data.message ? verifyRes.data.message : 'Verification failed');
+                                        }
+                                    })
+                                    .catch(function (error) {
+                                        var msg = (error.response && error.response.data && error.response.data.message) || error.message;
+                                        alert(msg || 'Could not verify payment');
+                                    });
+                            },
+                            "prefill": {
+                                "name": "Pradyumna kumar",
+                                "email": "pradyumna@example.com",
+                                "contact": "9000090000"
+                            },
+                            "notes": {
+                                "address": "Razorpay Corporate Office"
+                            },
+                            "theme": {
+                                "color": "#3399cc"
+                            }
+                        };
+                        var rzp1 = new Razorpay(options);
+                        rzp1.on('payment.failed', function (fail) {
+                            var desc = (fail.error && fail.error.description) ? fail.error.description : 'Payment failed';
+                            window.location.href = '/order/payment-failed?reason=' + encodeURIComponent(desc);
+                        });
+                        rzp1.open();
+                        e.preventDefault();
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            };
+        </script>
+    </body>
+
+    <%- include('./partials/footer'); %>

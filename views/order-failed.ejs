@@ -1,0 +1,43 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-gradient-to-b from-rose-50 via-white to-gray-50 min-h-screen font-sans antialiased">
+    <div class="max-w-lg mx-auto px-4 pt-8 pb-12">
+        <div class="flex items-center justify-between mb-8">
+            <a href="/cart" class="inline-flex items-center gap-2 text-gray-600 hover:text-rose-700 transition">
+                <i class="ri-arrow-left-s-line text-xl"></i>
+                <span class="text-sm font-medium">Back to cart</span>
+            </a>
+            <span class="text-xs font-medium text-rose-700 bg-rose-100 px-3 py-1 rounded-full">Not charged</span>
+        </div>
+
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-rose-100 mb-6 shadow-inner ring-8 ring-rose-50">
+                <i class="ri-close-circle-fill text-5xl text-rose-500"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Payment did not go through</h1>
+            <p class="mt-2 text-gray-600 text-sm leading-relaxed">
+                No money was taken. You can try again with another method or check your bank / UPI app.
+            </p>
+        </div>
+
+        <% if (reason && String(reason).trim()) { %>
+        <div class="bg-white rounded-2xl border border-rose-100 shadow-md px-5 py-4 mb-8">
+            <p class="text-xs font-medium text-rose-600 uppercase tracking-wide mb-1">Details</p>
+            <p class="text-sm text-gray-800"><%= reason %></p>
+        </div>
+        <% } %>
+
+        <div class="space-y-3">
+            <a href="/cart"
+                class="block w-full text-center bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3.5 rounded-xl shadow-md shadow-rose-600/20 transition">
+                Try again
+            </a>
+            <a href="/"
+                class="block w-full text-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 rounded-xl transition">
+                Continue shopping
+            </a>
+        </div>
+    </div>
+</body>
+
+<%- include('./partials/footer'); %>

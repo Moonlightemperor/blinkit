@@ -1,0 +1,150 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-gradient-to-b from-emerald-50 via-white to-gray-100 min-h-screen font-sans antialiased">
+  <div class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-gray-100">
+      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+            <i class="ri-shield-user-line text-emerald-700 text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p class="text-xs text-gray-500 -mt-0.5">Manage products and categories</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <a href="/admin/products"
+            class="hidden sm:inline-flex items-center px-3 py-2 text-xs font-semibold rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 transition">
+            View products
+          </a>
+          <a href="/admin/logout"
+            class="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-sm">
+            Logout
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Dashboard Overview -->
+        <section class="mb-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-semibold text-gray-900">Overview</h2>
+              <p class="text-xs text-gray-500 mt-1">Quick stats for your catalog</p>
+            </div>
+            <div class="hidden md:flex items-center gap-2 text-xs text-gray-500">
+              <i class="ri-time-line"></i>
+              <span>Live</span>
+            </div>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-gray-50 border border-gray-100 rounded-xl p-4">
+              <p class="text-xs font-medium text-gray-500">Total Products</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900"><%= prodcount %></p>
+            </div>
+            <div class="bg-gray-50 border border-gray-100 rounded-xl p-4">
+              <p class="text-xs font-medium text-gray-500">Total Categories</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900"><%= categcount %></p>
+            </div>
+            <div class="bg-gray-50 border border-gray-100 rounded-xl p-4">
+              <p class="text-xs font-medium text-gray-500">New Orders (demo)</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900">30</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Manage Products -->
+          <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Manage Products</h3>
+                <p class="text-xs text-gray-500 mt-1">Add new products or remove by ID</p>
+              </div>
+              <div class="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+                <i class="ri-box-3-line text-emerald-700 text-xl"></i>
+              </div>
+            </div>
+
+            <form enctype="multipart/form-data" autocomplete="off" action="/products" method="POST">
+              <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <h4 class="text-sm font-semibold text-gray-900">Create Product</h4>
+                <div class="mt-3 space-y-3">
+                  <input type="text" name="name" placeholder="Product Name" required
+                    class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" />
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="number" name="price" placeholder="Price" required
+                      class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" />
+                    <input type="number" name="stock" placeholder="Stock Quantity" required
+                      class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" />
+                  </div>
+                  <input type="text" name="category" placeholder="Category" required
+                    class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" />
+                  <textarea name="description" placeholder="Product Description" rows="4"
+                    class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"></textarea>
+                  <input type="file" name="image" required
+                    class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none text-sm bg-white" />
+                </div>
+
+                <button type="submit"
+                  class="mt-4 w-full inline-flex justify-center items-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm transition">
+                  Create Product
+                </button>
+              </div>
+            </form>
+
+            <form autocomplete="off" class="mt-5" action="/products/delete" method="POST">
+              <div class="rounded-xl border border-red-100 bg-red-50 p-4">
+                <h4 class="text-sm font-semibold text-red-700">Delete Product</h4>
+                <div class="mt-3 space-y-3">
+                  <input type="text" name="product_id" placeholder="Product ID" required
+                    class="w-full px-3 py-2.5 border border-red-200 rounded-xl outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400 text-sm bg-white" />
+                </div>
+
+                <button type="submit"
+                  class="mt-4 w-full inline-flex justify-center items-center px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold shadow-sm transition">
+                  Delete Product
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Manage Categories -->
+          <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Manage Categories</h3>
+                <p class="text-xs text-gray-500 mt-1">Create a new category name</p>
+              </div>
+              <div class="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+                <i class="ri-list-check-2-line text-emerald-700 text-xl"></i>
+              </div>
+            </div>
+
+            <form autocomplete="off" action="/categories/create" method="POST"
+              class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+              <h4 class="text-sm font-semibold text-gray-900">Create or Update Category</h4>
+              <div class="mt-3 space-y-3">
+                <input type="text" name="name" placeholder="Category Name" required
+                  class="w-full px-3 py-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white" />
+              </div>
+              <button type="submit"
+                class="mt-4 w-full inline-flex justify-center items-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm transition">
+                Save Category
+              </button>
+            </form>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+
+<%- include('./partials/footer'); %>

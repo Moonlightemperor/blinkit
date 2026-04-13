@@ -1,0 +1,97 @@
+<%- include('./partials/header'); %>
+
+    <body class="bg-gray-100">
+        <div class="flex flex-col min-h-screen">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-gray-100">
+                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Product management</h1>
+                        <p class="text-xs text-gray-500 mt-0.5">Manage all products and categories shown on Blinkit</p>
+                    </div>
+                    <a href="/admin/dashboard"
+                        class="hidden sm:inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+                        Admin dashboard
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main content -->
+            <main class="flex-1 overflow-y-auto">
+                <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                    <!-- Search Bar -->
+                    <div class="mb-6">
+                        <form action="/admin/products/search" method="GET"
+                            class="flex flex-col sm:flex-row gap-2 sm:gap-0">
+                            <input type="text" name="product_id" placeholder="Search by Product ID"
+                                class="w-full p-2 border border-gray-300 rounded-l sm:rounded-l-md sm:rounded-r-none text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                            <button type="submit"
+                                class="bg-emerald-600 text-white py-2 px-4 rounded-r sm:rounded-r-md sm:rounded-l-none hover:bg-emerald-700 text-sm font-medium">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Product List by Category -->
+                    <% for(let key in products){ %>
+                        <section class="bg-white shadow-sm rounded-2xl mb-6 border border-gray-100">
+                            <div class="flex items-center justify-between px-6 pt-5 pb-2">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900 capitalize">
+                                        <%= key %>
+                                    </h2>
+                                    <p class="text-xs text-gray-500">Showing latest items in this category</p>
+                                </div>
+                            </div>
+                            <div class="px-4 pb-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+                                    <% products[key].forEach(function(elem){ %>
+                                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col">
+                                            <div class="flex items-start gap-3">
+                                                <img class="w-20 h-20 rounded-lg object-contain bg-white"
+                                                    src="data:image/png;base64, <%= elem.image.toString('base64') %>" alt="">
+                                                <div class="flex-1">
+                                                    <h3 class="text-sm font-semibold text-gray-900 line-clamp-2">
+                                                        <%= elem.name %>
+                                                    </h3>
+                                                    <p class="mt-1 text-xs text-gray-500">
+                                                        ID: <span class="font-mono"><%= elem._id %></span>
+                                                    </p>
+                                                    <p class="mt-1 text-sm text-gray-800">
+                                                        ₹<%= elem.price %> <span class="text-xs text-gray-500"> · Stock:
+                                                            <%= elem.stock %></span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <p class="mt-2 text-xs text-gray-600 line-clamp-2 min-h-[2.5rem]">
+                                                <%= elem.description %>
+                                            </p>
+                                            <div class="mt-3 flex gap-3">
+                                                <a href="/products/delete/<%= elem._id %>"
+                                                    class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-semibold rounded-full bg-red-50 text-red-600 hover:bg-red-100">
+                                                    Delete
+                                                </a>
+                                                <button type="button"
+                                                    class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-700 hover:bg-indigo-100 cursor-not-allowed">
+                                                    Update (coming soon)
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <a href="/admin/products?category=&page=2"
+                                        class="text-xs font-medium text-indigo-600 hover:text-indigo-800">
+                                        See more in this category
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+                    <% } %>
+
+                </div>
+            </main>
+        </div>
+    </body>
+
+    <%- include('./partials/footer'); %>
