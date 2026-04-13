@@ -10,7 +10,7 @@ const appBaseUrl =
 const googleCallbackUrl =
   process.env.GOOGLE_CALLBACK_URL ||
   (appBaseUrl ? `${appBaseUrl}/auth/google/callback` : "") ||
-  "http://localhost:3000/auth/google/callback";
+  "/auth/google/callback";
 
 passport.use(
   new GoogleStrategy(
