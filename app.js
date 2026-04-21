@@ -17,7 +17,7 @@ const passport = require('passport');
 
 require("dotenv").config();
 
-require("./config/db");
+const connectDb = require("./config/db");
 require("./config/passport")
 
 app.set("view engine","ejs");
@@ -44,4 +44,19 @@ app.use('/users', userRouter);
 app.use('/cart', cartRouter);
 app.use('/payment', paymentRouter);
 app.use('/order', orderRouter);
-app.listen(3000);
+
+const PORT = process.env.PORT || 3000;
+
+async function startServer() {
+  try {
+    await connectDb();
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();
