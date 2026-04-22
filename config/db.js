@@ -2,8 +2,17 @@ const mongoose = require("mongoose");
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 5000;
+let connectPromise = null;
 
 async function connectDb(retryCount = 0) {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  if (connectPromise) {
+    return connectPromise;
+  }
+
   const mongoUrl = process.env.MONGOURL;
 
   if (!mongoUrl) {
@@ -11,14 +20,17 @@ async function connectDb(retryCount = 0) {
   }
 
   try {
-    await mongoose.connect(mongoUrl, {
+    connectPromise = mongoose.connect(mongoUrl, {
       serverSelectionTimeoutMS: 10000,
       connectTimeoutMS: 10000,
       socketTimeoutMS: 45000,
     });
+    await connectPromise;
     console.log("MongoDB connected");
+    connectPromise = null;
     return mongoose.connection;
   } catch (error) {
+    connectPromise = null;
     const nextAttempt = retryCount + 1;
     console.error(
       `MongoDB connection failed (attempt ${nextAttempt}/${MAX_RETRIES}):`,

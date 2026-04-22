@@ -8,6 +8,7 @@ router.get("/", userIsLoggedIn, async function (req, res) {
   try {
     let cart = await Cart.findOne({ user: req.session.passport.user }).populate(
       "products.product",
+      "name price",
     );
 
     let cartDataStructure = {};

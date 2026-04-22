@@ -76,8 +76,8 @@
                         <div
                             class="min-w-[8rem] max-w-[8rem] flex-shrink-0 bg-gray-50 rounded-xl p-3 border border-gray-100 hover:border-emerald-500 transition">
                             <div class="relative">
-                                <img src="data:image/jpg;base64, <%= elem.image.toString('base64') %>"
-                                    alt="<%= elem.name %>" class="h-24 w-full object-cover rounded-lg">
+                                <img src="/products/image/<%= elem._id %>"
+                                    alt="<%= elem.name %>" loading="lazy" decoding="async" class="h-24 w-full object-cover rounded-lg">
                             </div>
                             <p class="mt-2 text-xs font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">
                                 <%= elem.name %>
@@ -157,8 +157,8 @@
                             <% products[key].forEach(elem=>{ %>
                                 <div
                                     class="group bg-gray-50 rounded-xl p-3 border border-gray-100 hover:border-emerald-500 hover:bg-white transition flex flex-col">
-                                    <img src="data:image/jpg;base64, <%= elem.image.toString('base64') %>"
-                                        alt="<%= elem.name %>" class="w-full h-24 object-contain rounded-lg mb-2">
+                                    <img src="/products/image/<%= elem._id %>"
+                                        alt="<%= elem.name %>" loading="lazy" decoding="async" class="w-full h-24 object-contain rounded-lg mb-2">
                                     <p class="text-xs font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">
                                         <%= elem.name %>
                                     </p>

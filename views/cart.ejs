@@ -24,8 +24,8 @@
                     <% cart.forEach(elem=> { %>
                         <div
                             class="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
-                            <img src="data:image/jpg;base64, <%= elem.product.image.toString('base64') %>"
-                                alt="<%= elem.product.name %>" class="w-14 h-14 rounded-lg object-cover">
+                            <img src="/products/image/<%= elem.product._id %>"
+                                alt="<%= elem.product.name %>" loading="lazy" decoding="async" class="w-14 h-14 rounded-lg object-cover">
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-gray-900 line-clamp-2">
                                     <%= elem.product.name %>
