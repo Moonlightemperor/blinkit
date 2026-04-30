@@ -23,6 +23,12 @@ const AddressSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true
+  },
+  phone: {
+    type: String,
+    required: false,
+    trim: true,
+    default: ""
   }
 });
 
@@ -62,7 +68,8 @@ const validateUser = (data) => {
     state: Joi.string().trim().required(),
     zip: Joi.string().trim().required(),
     city: Joi.string().trim().required(),
-    address: Joi.string().trim().required()
+    address: Joi.string().trim().required(),
+    phone: Joi.string().trim().allow('').optional()
   });
 
   const schema = Joi.object({

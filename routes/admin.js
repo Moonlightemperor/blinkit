@@ -7,6 +7,8 @@ const {validateAdmin} = require("../middlewares/admin");
 const { Product } = require("../Models/ProductModel");
 const { Category } = require("../Models/category");
 
+const { Order } = require("../Models/order");
+
 require("dotenv").config();
 
 if (
@@ -34,8 +36,9 @@ if (
       res.send(err.message);
     }
   });
+}
 
-  router.get("/login", function (req, res) {
+router.get("/login", function (req, res) {
     res.render("admin_login");
   });
 
@@ -57,7 +60,8 @@ if (
   router.get("/dashboard", validateAdmin, async function (req, res) {
     let prodcount = await Product.find().countDocuments();
     let categcount = await Category.find().countDocuments();
-    res.render("admin_dashboard",{prodcount, categcount});
+    let ordercount = await Order.find().countDocuments();
+    res.render("admin_dashboard",{prodcount, categcount, ordercount});
   });
 
   router.get("/products", validateAdmin, async function (req, res) {
@@ -91,6 +95,25 @@ if (
     res.cookie("token", "");
     res.redirect("/admin/login");
   });
-}
+
+  router.get("/orders", validateAdmin, async function (req, res) {
+    const orders = await Order.find()
+      .populate("user")
+      .populate("products.product")
+      .sort({ createdAt: -1 });
+
+    res.render("admin_orders", { orders });
+  });
+
+  router.post("/orders/status/:id", validateAdmin, async function (req, res) {
+    try {
+      await Order.findByIdAndUpdate(req.params.id, {
+        status: req.body.status
+      });
+      res.redirect("/admin/orders");
+    } catch (err) {
+      res.send(err.message);
+    }
+  });
 
 module.exports = router;

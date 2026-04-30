@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const { Payment } = require('../Models/payment');
 const { Order } = require('../Models/order');
+const { Cart } = require('../Models/cart');
 
 const Razorpay = require('razorpay');
 
@@ -59,6 +60,7 @@ router.post("/api/payment/verify", async (req, res) => {
       razorpay_payment_id,
       razorpay_signature,
       amount,
+      address,
       cart // Add cart data from frontend
     } = req.body;
 
@@ -92,7 +94,8 @@ router.post("/api/payment/verify", async (req, res) => {
       });
     }
 
-    await Payment.create({
+    // Create Payment record first
+    const newPayment = await Payment.create({
       transactionID: razorpay_payment_id,
       user: req.user._id,
       orderId: razorpay_order_id,
@@ -103,26 +106,24 @@ router.post("/api/payment/verify", async (req, res) => {
       status: "success",
     });
 
-    // Create an Order record with the same orderID
+    // Create Order record linked to payment
     const orderProducts = cart ? cart.map(item => ({
       product: item.product._id || item.product,
       quantity: item.quantity
     })) : [];
-
-    console.log('Creating order with ID:', razorpay_order_id);
-    console.log('Products:', orderProducts);
 
     const newOrder = await Order.create({
       orderID: razorpay_order_id,
       user: req.user._id,
       products: orderProducts,
       totalPrice: amountNum,
-      address: null, // Will be set later via map
-      status: "pending",
-      payment: null, // Will be linked later
+      address: address || "No Address Provided", // ✅ Saves selected address
+      status: "confirmed", // ✅ Now confirmed since payment is successful
+      payment: newPayment._id, // ✅ LINKED TO PAYMENT!
     });
 
-    console.log('Order created successfully:', newOrder._id);
+    // Clear the cart securely after successful payment
+    await Cart.findOneAndDelete({ user: req.user._id });
 
     res.json({
       success: true,
@@ -132,8 +133,19 @@ router.post("/api/payment/verify", async (req, res) => {
     });
 
   } catch (err) {
-    console.error("VERIFY ERROR:", err);
-    res.status(500).json({ error: err.message });
+    // Log detailed error for debugging
+    console.error("Payment verification error:", {
+      error: err.message,
+      stack: err.stack,
+      orderId: req.body.razorpay_order_id,
+      userId: req.user?._id
+    });
+    
+    // Return generic error to client (don't expose internal details)
+    res.status(500).json({ 
+      success: false,
+      message: "Payment verification failed. Please try again or contact support." 
+    });
   }
 });
 

@@ -58,62 +58,12 @@ router.get("/success/:razorpayOrderId", userIsLoggedIn, async (req, res) => {
   }
 });
 
-router.get("/address/:orderid", userIsLoggedIn, async function (req, res) {
-  try {
-    console.log('Accessing address page for order:', req.params.orderid);
-    console.log('User:', req.user._id);
-    
-    let order = await Order.findOne({ orderID: req.params.orderid });
-    console.log('Found order:', order);
-    
-    if (!order) {
-      console.log('Order not found');
-      return res.status(404).render("order-error", {
-        title: "Order not found",
-        message: "This order could not be found.",
-        user: req.user,
-      });
-    }
-    
-    // Only allow the order owner to view the address selection
-    if (order.user.toString() !== req.user._id.toString()) {
-      console.log('Unauthorized access attempt');
-      return res.status(403).render("order-error", {
-        title: "Access Denied",
-        message: "You are not authorized to access this order.",
-        user: req.user,
-      });
-    }
-    
-    // If address is already set, redirect to order details
-    if (order.address) {
-      return res.redirect('/order/details/' + order.orderID);
-    }
-    
-    console.log('Rendering map page');
-    res.render("map", {
-      orderid: order.orderID,
-      user: req.user,
-    });
-  } catch (error) {
-    console.error("Address page error:", error);
-    res.status(500).render("order-error", {
-      title: "Something went wrong",
-      message: "Please try again or contact support.",
-      user: req.user,
-    });
-  }
-});
+// Deprecated address routes removed - handled in checkout flow instead
 
 router.get("/details/:orderid", userIsLoggedIn, async function (req, res) {
   try {
-    console.log('Accessing order details for:', req.params.orderid);
-    
     let order = await Order.findOne({ orderID: req.params.orderid })
-      .populate('user')
-      .populate('products.product');
-    
-    console.log('Found order for details:', order);
+      .populate('products.product'); 
     
     if (!order) {
       return res.status(404).render("order-error", {
@@ -124,8 +74,7 @@ router.get("/details/:orderid", userIsLoggedIn, async function (req, res) {
     }
     
     // Only allow the order owner to view the details
-    if (order.user._id.toString() !== req.user._id.toString()) {
-      console.log('Unauthorized access to order details');
+    if (order.user.toString() !== req.user._id.toString()) {
       return res.status(403).render("order-error", {
         title: "Access Denied",
         message: "You are not authorized to view this order.",
@@ -144,40 +93,6 @@ router.get("/details/:orderid", userIsLoggedIn, async function (req, res) {
       message: "Please try again or contact support.",
       user: req.user,
     });
-  }
-});
-
-router.post("/address/:orderid", userIsLoggedIn, async function (req, res) {
-  try {
-    console.log('Updating address for order:', req.params.orderid);
-    console.log('User:', req.user._id);
-    console.log('Address:', req.body.address);
-    
-    let order = await Order.findOne({ orderID: req.params.orderid });
-    console.log('Found order:', order);
-    
-    if (!order) {
-      console.log('Order not found');
-      return res.status(404).send("Sorry, this order is not found");
-    }
-    if (!req.body.address) {
-      return res.status(400).send("Sorry, address is required");
-    }
-    
-    // Only allow the order owner to update the address
-    if (order.user.toString() !== req.user._id.toString()) {
-      return res.status(403).send("You are not authorized to update this order");
-    }
-    
-    order.address = req.body.address;
-    await order.save();
-    console.log('Address saved successfully');
-    
-    // Redirect to order details page with proper order ID
-    res.redirect('/order/details/' + order.orderID);
-  } catch (error) {
-    console.error("Address update error:", error);
-    res.status(500).send("Internal server error");
   }
 });
 

@@ -1,0 +1,108 @@
+<%- include('./partials/header'); %>
+    <body class="bg-gradient-to-b from-emerald-50 via-slate-50 to-gray-100 font-sans antialiased min-h-screen">
+        <div class="max-w-5xl mx-auto px-4 py-4 space-y-6">
+            <!-- Top bar -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="/" class="text-gray-600 hover:text-gray-900"><i class="ri-arrow-left-line text-xl"></i></a>
+                    <h1 class="text-xl font-bold tracking-tight text-gray-900">Search Results</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="/users/profile"
+                        class="hidden sm:inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition">
+                        <i class="ri-user-line text-base"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="/users/logout"
+                        class="hidden sm:inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition">
+                        <i class="ri-logout-box-r-line text-base"></i>
+                        <span>Logout</span>
+                    </a>
+                    <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                        <a href="/cart"
+                            class="relative inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-full shadow-md hover:bg-emerald-700">
+                            <i class="ri-shopping-cart-2-line mr-2 text-lg"></i>
+                            Cart
+                            <span
+                                class="ml-2 inline-flex items-center justify-center w-5 h-5 text-[11px] font-bold bg-white text-emerald-700 rounded-full">
+                                <%= cartCount %>
+                            </span>
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <form action="/products/search" method="GET" class="bg-white rounded-2xl shadow-sm border border-gray-100 px-4 py-3 flex items-center gap-3">
+                <i class="ri-search-line text-gray-400 text-lg"></i>
+                <input type="text" name="q" value="<%= query %>" placeholder="Search for atta, milk, snacks and more"
+                    class="w-full text-sm border-none outline-none focus:ring-0 placeholder:text-gray-400" required />
+            </form>
+
+            <div class="space-y-6">
+                <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 min-h-[50vh]">
+                    <div class="mb-4">
+                        <h2 class="text-base font-semibold text-gray-900">
+                            Results for "<%= query %>"
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-1"><%= products.length %> items found</p>
+                    </div>
+
+                    <% if (products.length === 0) { %>
+                        <div class="flex flex-col items-center justify-center py-16">
+                            <i class="ri-search-eye-line text-5xl text-gray-300 mb-3"></i>
+                            <h3 class="text-lg font-medium text-gray-900">No products found</h3>
+                            <p class="text-sm text-gray-500 mt-1">Try searching for something else</p>
+                        </div>
+                    <% } else { %>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <% products.forEach(elem=>{ %>
+                                <div
+                                    class="group bg-gray-50 rounded-xl p-3 border border-gray-100 hover:border-emerald-500 hover:bg-white transition flex flex-col">
+                                    <img src="/products/image/<%= elem._id %>?v=1"
+                                        alt="<%= elem.name %>" loading="lazy" decoding="async" class="w-full h-24 object-contain rounded-lg mb-2">
+                                    <p class="text-xs font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">
+                                        <%= elem.name %>
+                                    </p>
+                                    <p class="mt-1 text-[11px] text-gray-400">~ 1 unit</p>
+                                    <div class="mt-2 flex items-center justify-between">
+                                        <div>
+                                            <p class="text-[11px] text-gray-400 line-through">₹<%= Number(elem.price)+15 %></p>
+                                            <p class="text-sm font-semibold text-gray-900">₹<%= elem.price %></p>
+                                        </div>
+                                        <a href="/cart/add/<%= elem._id %>"
+                                            class="px-3 py-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 rounded-full group-hover:bg-emerald-600 group-hover:text-white transition">
+                                            ADD
+                                        </a>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                </section>
+            </div>
+
+            <% if(somethingInCart){ %>
+                <div class="h-24"></div>
+                <div
+                    class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur shadow-[0_-6px_20px_rgba(15,23,42,0.18)] border-t border-gray-100">
+                    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">
+                                <%= cartCount %> item<%= cartCount > 1 ? 's' : '' %> in cart
+                            </p>
+                            <p class="text-[11px] text-gray-500">
+                                Get FREE delivery on higher order value
+                            </p>
+                        </div>
+                        <a href="/cart"
+                            class="inline-flex items-center justify-center px-10 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-full shadow-md hover:bg-emerald-700">
+                            Go to cart
+                            <i class="ri-arrow-right-s-line text-lg ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </body>
+<%- include('./partials/footer'); %>

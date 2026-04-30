@@ -64,12 +64,7 @@
                     </div>
                 </div>
                 
-                <!-- Mini Map Preview -->
-                <% if(order.address) { %>
-                <div class="mt-4 p-3 bg-gray-50 rounded-xl">
-                    <div id="miniMap" class="aspect-video bg-gray-100 rounded-lg"></div>
-                </div>
-                <% } %>
+
             </div>
         </div>
 
@@ -90,8 +85,8 @@
                 <% order.products.forEach(function(item) { %>
                 <div class="p-4 flex items-center gap-4">
                     <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
-                        <% if(item.product && item.product.image) { %>
-                            <img src="<%= item.product.image %>" alt="<%= item.product.name %>" class="w-full h-full object-cover rounded-xl">
+                        <% if(item.product) { %>
+                            <img src="/products/image/<%= item.product._id %>?v=1" alt="<%= item.product.name %>" class="w-full h-full object-cover rounded-xl bg-white p-0.5 border border-gray-100">
                         <% } else { %>
                             <i class="ri-image-line text-gray-400 text-xl"></i>
                         <% } %>
@@ -147,16 +142,16 @@
 
         <!-- Action Buttons -->
         <div class="space-y-3 pb-6">
-            <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+            <a href="/users/profile" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
                 <i class="ri-truck-line"></i>
                 Track Order
-            </button>
+            </a>
             <div class="grid grid-cols-2 gap-3">
-                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                <a href="mailto:support@blinkit.com" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
                     <i class="ri-customer-service-line"></i>
                     Support
-                </button>
-                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                </a>
+                <button onclick="window.print()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
                     <i class="ri-download-line"></i>
                     Invoice
                 </button>
@@ -165,54 +160,5 @@
     </main>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    
-    <% if(order.address) { %>
-    <script>
-        // Initialize mini map when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            const address = "<%= order.address %>";
-            const miniMap = L.map('miniMap').setView([20.5937, 78.9629], 13);
-            
-            // Add tile layer
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(miniMap);
-            
-            // Geocode the address to get coordinates
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const lat = parseFloat(data[0].lat);
-                        const lon = parseFloat(data[0].lon);
-                        
-                        // Center map on the location
-                        miniMap.setView([lat, lon], 15);
-                        
-                        // Add a marker for the delivery location
-                        const deliveryIcon = L.divIcon({
-                            html: '<div style="background: #10b981; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"><i class="ri-home-4-line"></i></div>',
-                            iconSize: [24, 24],
-                            iconAnchor: [12, 12],
-                            popupAnchor: [0, -12]
-                        });
-                        
-                        L.marker([lat, lon], { icon: deliveryIcon })
-                            .addTo(miniMap)
-                            .bindPopup('Delivery Location')
-                            .openPopup();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error geocoding address:', error);
-                    // Show default location if geocoding fails
-                    miniMap.setView([20.5937, 78.9629], 5);
-                });
-        });
-    </script>
-    <% } %>
 </body>
 </html>

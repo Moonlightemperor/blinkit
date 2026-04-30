@@ -6,9 +6,10 @@
             <div class="flex justify-between items-center py-4">
                 <a href="/" class="text-lg text-gray-600 hover:text-gray-800"><i class="ri-arrow-left-s-line"></i></a>
                 <h1 class="text-xl font-semibold">Checkout</h1>
-                <button class="text-sm text-emerald-700 font-medium">Help</button>
+                <a href="mailto:support@blinkit.com" class="text-sm text-emerald-700 font-medium hover:underline">Help</a>
             </div>
 
+            <% if (cart && cart.length > 0) { %>
             <!-- Delivery Info -->
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex items-start gap-4">
@@ -16,7 +17,7 @@
                         class="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-50 text-emerald-600 text-2xl ri-timer-line"></i>
                     <div class="flex-1">
                         <p class="text-sm font-semibold text-gray-900">Delivery in
-                            <%= Math.floor((Math.random()*10)+3) %> minutes</p>
+                            15 minutes</p>
                         <p class="text-xs text-gray-500 mt-0.5">Shipment of <%= cart.length %> item<%= cart.length > 1 ? 's' : '' %></p>
                     </div>
                 </div>
@@ -24,7 +25,7 @@
                     <% cart.forEach(elem=> { %>
                         <div
                             class="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5">
-                            <img src="/products/image/<%= elem.product._id %>"
+                            <img src="/products/image/<%= elem.product._id %>?v=1"
                                 alt="<%= elem.product.name %>" loading="lazy" decoding="async" class="w-14 h-14 rounded-lg object-cover">
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-gray-900 line-clamp-2">
@@ -43,9 +44,9 @@
                                     <p class="mx-2 text-sm font-medium text-gray-900">
                                         <%= elem.quantity %>
                                     </p>
-                                    <button disabled
-                                        class="px-2 py-1 rounded-full opacity-40 cursor-not-allowed"><i
-                                            class="ri-add-line text-sm"></i></button>
+                                    <a href="/cart/add/<%= elem.product._id %>"
+                                        class="px-2 py-1 rounded-full hover:bg-emerald-100"><i
+                                            class="ri-add-line text-sm"></i></a>
                                 </div>
                                 <p class="text-[11px] text-gray-400 line-through">
                                     ₹<%= Number(elem.price)*Number(elem.quantity)+20 %>
@@ -69,63 +70,62 @@
                 </div>
 
                 <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3">
-                        <div class="h-20 flex items-center justify-center bg-white rounded-xl border border-gray-100 overflow-hidden">
-                            <img src="https://www.bigbasket.com/media/uploads/p/xxl/40015993_11-uncle-chips-spicy-treat.jpg"
-                                alt="Product Image" class="h-20 w-auto object-contain">
-                        </div>
-                        <p class="text-[11px] text-gray-800 font-medium mt-2 line-clamp-2">Uncle Chipps Spicy Treat Flavour Potato Chips</p>
-                        <p class="text-[11px] text-gray-500 mt-1">48 g</p>
-                        <div class="mt-3 flex items-center justify-between gap-3">
-                            <p class="text-sm font-bold text-gray-900">₹20</p>
-                            <button type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-3 py-1 rounded-xl">
-                                ADD
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3">
-                        <div class="h-20 flex items-center justify-center bg-white rounded-xl border border-gray-100 overflow-hidden">
-                            <img src="https://m.media-amazon.com/images/I/61mQ-Q7HmCL._AC_UF1000,1000_QL80_.jpg"
-                                alt="Product Image" class="h-20 w-auto object-contain">
-                        </div>
-                        <p class="text-[11px] text-gray-800 font-medium mt-2 line-clamp-2">Coca-Cola Soft Drink (300 ml)</p>
-                        <p class="text-[11px] text-gray-500 mt-1">300 ml</p>
-                        <div class="mt-3 flex items-center justify-between gap-3">
-                            <p class="text-sm font-bold text-gray-900">₹40</p>
-                            <button type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-3 py-1 rounded-xl">
-                                ADD
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3">
-                        <div class="h-20 flex items-center justify-center bg-white rounded-xl border border-gray-100 overflow-hidden">
-                            <img src="https://www.dorita.se/media/catalog/product/9/0/900179-lay-s-saltet-potetgull-175g.jpg"
-                                alt="Product Image" class="h-20 w-auto object-contain">
-                        </div>
-                        <p class="text-[11px] text-gray-800 font-medium mt-2 line-clamp-2">Chheda's Golden Banana Chips (Rock Salt)</p>
-                        <p class="text-[11px] text-gray-500 mt-1">170 g</p>
-                        <div class="mt-3 flex items-center justify-between gap-3">
+                    <% if(typeof rnproducts !== 'undefined') { %>
+                        <% rnproducts.forEach(function(elem){ %>
+                        <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3 flex flex-col justify-between hover:border-emerald-200 transition group">
                             <div>
-                                <p class="text-sm font-bold text-gray-900">₹85</p>
-                                <p class="text-[11px] text-red-500 mt-0.5">16% OFF</p>
+                                <div class="h-20 flex items-center justify-center bg-white rounded-xl border border-gray-100 overflow-hidden">
+                                    <img src="/products/image/<%= elem._id %>?v=1"
+                                        alt="<%= elem.name %>" class="h-20 w-auto object-contain">
+                                </div>
+                                <p class="text-[11px] text-gray-800 font-medium mt-2 line-clamp-2"><%= elem.name %></p>
+                                <p class="text-[11px] text-gray-500 mt-1">1 unit</p>
                             </div>
-                            <button type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-3 py-1 rounded-xl">
-                                ADD
-                            </button>
+                            <div class="mt-3 flex items-center justify-between gap-2">
+                                <p class="text-sm font-bold text-gray-900">₹<%= elem.price %></p>
+                                <a href="/cart/add/<%= elem._id %>" class="bg-emerald-50 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white text-[11px] font-bold px-3 py-1.5 rounded-full transition text-center">
+                                    ADD
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                        <% }) %>
+                    <% } %>
                 </div>
+            </div>
 
-                <div class="mt-4 text-center text-white bg-gradient-to-r from-emerald-600 to-emerald-700 py-4 px-5 rounded-2xl border border-emerald-600">
-                    <h1 class="text-base font-bold">Get FREE delivery</h1>
-                    <p class="text-xs text-emerald-100 mt-0.5">Add products worth ₹236 more</p>
-                    <button type="button"
-                        class="text-sm bg-white/90 text-gray-900 px-6 py-2 rounded-xl font-semibold capitalize mt-3 hover:bg-white">
-                        See all coupons
-                    </button>
-                </div>
+            <!-- Delivery Address -->
+            <div id="address-section" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-base font-bold text-gray-900 mb-4">Delivery Address</h3>
+                
+                <% if (user.addresses && user.addresses.length > 0) { %>
+                    <div class="space-y-3 mb-4">
+                        <% user.addresses.forEach((addr, idx) => { %>
+                            <div class="flex items-start gap-3 p-3 border rounded-xl hover:border-emerald-500 <%= idx === 0 ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200' %>">
+                                <input type="radio" id="addr-<%= idx %>" name="selectedAddress" value="<%= addr.address %>, <%= addr.city %>, <%= addr.state %> <%= addr.zip %> (Phone: <%= addr.phone || 'N/A' %>)" class="mt-1.5 text-emerald-600 focus:ring-emerald-500" <%= idx === 0 ? 'checked' : '' %>>
+                                <label for="addr-<%= idx %>" class="flex-1 cursor-pointer">
+                                    <p class="text-sm font-medium text-gray-900">Address <%= idx + 1 %></p>
+                                    <p class="text-xs text-gray-600 mt-0.5"><%= addr.address %>, <%= addr.city %>, <%= addr.state %> <%= addr.zip %></p>
+                                    <p class="text-xs font-semibold text-gray-500 mt-0.5"><i class="ri-phone-line"></i> <%= addr.phone || 'N/A' %></p>
+                                </label>
+                                <form action="/users/address/delete/<%= addr._id %>" method="POST">
+                                    <button type="submit" class="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition"><i class="ri-delete-bin-line"></i></button>
+                                </form>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+
+                <form action="/users/address/add" method="POST" class="mt-4 border-t border-gray-100 pt-4">
+                    <p class="text-sm font-semibold text-gray-900 mb-3">Add New Address</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" name="address" placeholder="Street Address" class="col-span-2 text-sm rounded-lg border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                        <input type="text" name="city" placeholder="City" class="col-span-1 text-sm rounded-lg border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                        <input type="text" name="state" placeholder="State" class="col-span-1 text-sm rounded-lg border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                        <input type="text" name="zip" placeholder="ZIP Code" class="col-span-1 text-sm rounded-lg border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                        <input type="text" name="phone" placeholder="Mobile Number" class="col-span-1 text-sm rounded-lg border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                        <button type="submit" class="col-span-2 bg-emerald-50 text-emerald-700 text-sm font-semibold rounded-lg hover:bg-emerald-100 transition py-2">Save Address</button>
+                    </div>
+                </form>
             </div>
 
             <!-- Bill Details -->
@@ -143,7 +143,7 @@
                 <div class="mt-4 space-y-3">
                     <div class="flex items-center justify-between text-sm">
                         <p class="text-gray-600">Items total</p>
-                        <p class="text-gray-900 font-medium">₹<%= finalprice - 34 %></p>
+                        <p class="text-gray-900 font-medium">₹<%= finalprice %></p>
                     </div>
                     <div class="flex items-center justify-between text-sm">
                         <p class="text-gray-600">Delivery charge</p>
@@ -156,7 +156,7 @@
 
                     <div class="border-t border-gray-100 pt-3 flex items-end justify-between">
                         <p class="text-gray-900 font-bold text-base">Grand total</p>
-                        <p class="text-gray-900 font-extrabold text-2xl">₹<%= finalprice %></p>
+                        <p class="text-gray-900 font-extrabold text-2xl">₹<%= finalprice + 34 %></p>
                     </div>
                 </div>
             </div>
@@ -194,32 +194,29 @@
 
                 <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <button type="button"
-                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
-                        <i class="ri-mic-line text-lg text-gray-700"></i>
-                        <p class="mt-1 text-xs font-semibold text-gray-700">Record</p>
+                        class="delivery-instruction-btn flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl transition group">
+                        <i class="ri-mic-line text-lg text-gray-700 group-[.active]:text-emerald-600 pointer-events-none"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700 group-[.active]:text-emerald-700 pointer-events-none">Record</p>
                     </button>
                     <button type="button"
-                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
-                        <i class="ri-prohibited-line text-lg text-gray-700"></i>
-                        <p class="mt-1 text-xs font-semibold text-gray-700">Avoid calling</p>
+                        class="delivery-instruction-btn flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl transition group">
+                        <i class="ri-prohibited-line text-lg text-gray-700 group-[.active]:text-emerald-600 pointer-events-none"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700 group-[.active]:text-emerald-700 pointer-events-none">Avoid calling</p>
                     </button>
                     <button type="button"
-                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
-                        <i class="ri-notification-off-line text-lg text-gray-700"></i>
-                        <p class="mt-1 text-xs font-semibold text-gray-700">No bell</p>
+                        class="delivery-instruction-btn flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl transition group">
+                        <i class="ri-notification-off-line text-lg text-gray-700 group-[.active]:text-emerald-600 pointer-events-none"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700 group-[.active]:text-emerald-700 pointer-events-none">No bell</p>
                     </button>
                     <button type="button"
-                        class="flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 transition">
-                        <i class="ri-door-open-line text-lg text-gray-700"></i>
-                        <p class="mt-1 text-xs font-semibold text-gray-700">Leave at door</p>
+                        class="delivery-instruction-btn flex flex-col items-center justify-center py-3 bg-gray-50 border border-gray-100 rounded-2xl transition group">
+                        <i class="ri-door-open-line text-lg text-gray-700 group-[.active]:text-emerald-600 pointer-events-none"></i>
+                        <p class="mt-1 text-xs font-semibold text-gray-700 group-[.active]:text-emerald-700 pointer-events-none">Leave at door</p>
                     </button>
                 </div>
             </div>
 
-            <!-- Ordering for someone else -->
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mt-6 text-sm text-gray-700">
-                Ordering for someone else? <span class="text-emerald-700 font-medium">Add details</span>
-            </div>
+
             <!-- Cancellation Policy -->
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-10 mt-6">
                 <div class="flex items-start gap-3">
@@ -242,12 +239,12 @@
                     <div class="flex-1">
                         <div class="flex items-start justify-between gap-3">
                             <div>
-                                <p class="text-xs font-semibold text-gray-500 uppercase">Delivering to Home</p>
-                                <p class="text-sm text-gray-800 mt-1">
-                                    1st Floor M2, 132C Apex Builders Sector C Indrauri, saarthi...
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Delivering to</p>
+                                <p id="footer-address-text" class="text-sm text-gray-800 mt-1">
+                                    Please select an address above
                                 </p>
                             </div>
-                            <button type="button" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 whitespace-nowrap">
+                            <button type="button" onclick="document.getElementById('address-section').scrollIntoView({behavior: 'smooth'})" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 whitespace-nowrap">
                                 Change
                             </button>
                         </div>
@@ -264,7 +261,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-xs font-semibold text-gray-500 uppercase">Total</p>
-                                <p class="text-2xl font-extrabold text-gray-900 mt-1">₹<%= finalprice %></p>
+                                <p class="text-2xl font-extrabold text-gray-900 mt-1">₹<%= finalprice + 34 %></p>
                             </div>
                         </div>
 
@@ -275,6 +272,18 @@
                     </div>
                 </div>
             </div>
+            <% } else { %>
+                <div class="bg-white p-12 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center mt-10">
+                    <div class="h-24 w-24 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
+                        <i class="ri-shopping-cart-2-line text-4xl text-emerald-600"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900">Your cart is empty</h2>
+                    <p class="text-sm text-gray-500 mt-2 text-center max-w-xs">Looks like you haven't added anything to your cart yet.</p>
+                    <a href="/" class="mt-8 inline-flex items-center justify-center px-8 py-3 bg-emerald-600 text-white font-semibold rounded-xl shadow-sm hover:bg-emerald-700 transition">
+                        Start Shopping
+                    </a>
+                </div>
+            <% } %>
         </div>
 
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -286,9 +295,44 @@
         <script>
             const cartData = <%- JSON.stringify(cart) %>;
             
+            // Dynamically update footer address
+            const radios = document.querySelectorAll('input[name="selectedAddress"]');
+            const footerAddress = document.getElementById('footer-address-text');
+            
+            function updateFooterAddress() {
+                const selected = document.querySelector('input[name="selectedAddress"]:checked');
+                if(selected && footerAddress) {
+                    footerAddress.textContent = selected.value;
+                }
+            }
+            
+            radios.forEach(radio => {
+                radio.addEventListener('change', updateFooterAddress);
+            });
+            updateFooterAddress();
+
+            // Delivery Instructions JS
+            const instructionBtns = document.querySelectorAll('.delivery-instruction-btn');
+            instructionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    this.classList.toggle('bg-emerald-50');
+                    this.classList.toggle('border-emerald-200');
+                    this.classList.toggle('bg-gray-50');
+                    this.classList.toggle('border-gray-100');
+                });
+            });
+
             document.querySelector('.paybtn').onclick = function (e) {
+                const selectedAddressRadio = document.querySelector('input[name="selectedAddress"]:checked');
+                if (!selectedAddressRadio) {
+                    alert("Please select or add a delivery address before placing your order!");
+                    return;
+                }
+                const selectedAddress = selectedAddressRadio.value;
+
                 console.log('Button clicked');
-                axios.post('/payment/create/order', { amount: <%= finalprice %> })
+                axios.post('/payment/create/order', { amount: <%= finalprice + 34 %> })
                     .then(function (response) {
                         var options = {
                             "key": "<%= razorpayKeyId %>",
@@ -303,7 +347,8 @@
                                     razorpay_order_id: payResponse.razorpay_order_id,
                                     razorpay_payment_id: payResponse.razorpay_payment_id,
                                     razorpay_signature: payResponse.razorpay_signature,
-                                    amount: <%= finalprice %>,
+                                    amount: <%= finalprice + 34 %>,
+                                    address: selectedAddress,
                                     cart: cartData
                                 })
                                     .then(function (verifyRes) {

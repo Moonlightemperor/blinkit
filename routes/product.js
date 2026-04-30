@@ -43,11 +43,61 @@ router.get("/image/:id", async function (req, res) {
       return res.status(404).send("Image not found");
     }
 
+    let imgBuffer = product.image;
+    // Extract native buffer if Mongoose lean() returned a BSON Binary object
+    if (imgBuffer && imgBuffer._bsontype === 'Binary') {
+      imgBuffer = imgBuffer.buffer;
+    } else if (imgBuffer && imgBuffer.buffer && Buffer.isBuffer(imgBuffer.buffer)) {
+      imgBuffer = imgBuffer.buffer;
+    }
+
     res.set("Cache-Control", "public, max-age=86400");
-    res.type(detectImageMimeType(product.image));
-    return res.send(product.image);
+    res.type(detectImageMimeType(imgBuffer));
+    return res.send(imgBuffer);
   } catch (error) {
     return res.status(500).send("Could not fetch image");
+  }
+});
+
+router.get("/search", userIsLoggedIn, async function (req, res) {
+  try {
+    const query = req.query.q || "";
+    let cart = await Cart.findOne({ user: req.session.passport.user }).lean();
+    
+    // Find products matching the query case-insensitively
+    const products = await Product.find({ 
+      name: { $regex: query, $options: "i" } 
+    }).select("name price category").lean();
+
+    res.render("search", {
+      products,
+      query,
+      somethingInCart: cart && cart.products && cart.products.length > 0,
+      cartCount: cart?.products?.length || 0,
+    });
+  } catch (error) {
+    res.status(500).send("Error searching products");
+  }
+});
+
+router.get("/category/:category", userIsLoggedIn, async function (req, res) {
+  try {
+    const category = req.params.category;
+    let cart = await Cart.findOne({ user: req.session.passport.user }).lean();
+    
+    // Find products matching the category case-insensitively
+    const products = await Product.find({ 
+      category: { $regex: new RegExp("^" + category + "$", "i") } 
+    }).select("name price category").lean();
+
+    res.render("search", {
+      products,
+      query: category,
+      somethingInCart: cart && cart.products && cart.products.length > 0,
+      cartCount: cart?.products?.length || 0,
+    });
+  } catch (error) {
+    res.status(500).send("Error searching products by category");
   }
 });
 
