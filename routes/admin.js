@@ -91,6 +91,32 @@ router.get("/login", function (req, res) {
     res.render("admin_products", { products:finalResult });
   });
 
+  router.get("/products/search", validateAdmin, async function (req, res) {
+    const query = req.query.product_id || "";
+    let matchedProducts = [];
+
+    if (query.trim() !== "") {
+      const { mongoose } = require("mongoose");
+      // Try by name (case-insensitive), also try exact _id if valid ObjectId
+      const conditions = [{ name: { $regex: query, $options: "i" } }];
+      if (query.match(/^[a-f\d]{24}$/i)) {
+        const mongoose = require("mongoose");
+        conditions.push({ _id: new mongoose.Types.ObjectId(query) });
+      }
+      matchedProducts = await Product.find({ $or: conditions }).lean();
+    }
+
+    // Group by category for consistent template rendering
+    const finalResult = {};
+    matchedProducts.forEach((p) => {
+      const cat = p.category || "Uncategorised";
+      if (!finalResult[cat]) finalResult[cat] = [];
+      finalResult[cat].push(p);
+    });
+
+    res.render("admin_products", { products: finalResult, searchQuery: query });
+  });
+
   router.get("/logout", function (req, res) {
     res.cookie("token", "");
     res.redirect("/admin/login");

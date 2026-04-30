@@ -23,14 +23,29 @@
                     <div class="mb-6">
                         <form action="/admin/products/search" method="GET"
                             class="flex flex-col sm:flex-row gap-2 sm:gap-0">
-                            <input type="text" name="product_id" placeholder="Search by Product ID"
+                            <input type="text" name="product_id" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" placeholder="Search by name or Product ID"
                                 class="w-full p-2 border border-gray-300 rounded-l sm:rounded-l-md sm:rounded-r-none text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500">
                             <button type="submit"
                                 class="bg-emerald-600 text-white py-2 px-4 rounded-r sm:rounded-r-md sm:rounded-l-none hover:bg-emerald-700 text-sm font-medium">
                                 Search
                             </button>
                         </form>
+                        <% if (typeof searchQuery !== 'undefined' && searchQuery !== '') { %>
+                            <div class="mt-2 flex items-center gap-2">
+                                <p class="text-sm text-gray-500">Results for <span class="font-semibold text-gray-800">"<%= searchQuery %>"</span></p>
+                                <a href="/admin/products" class="text-xs text-emerald-600 hover:underline font-semibold">Clear</a>
+                            </div>
+                        <% } %>
                     </div>
+
+                    <% if (Object.keys(products).length === 0 && typeof searchQuery !== 'undefined' && searchQuery !== '') { %>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
+                            <i class="ri-search-line text-4xl text-gray-300 mb-3 block"></i>
+                            <p class="text-gray-600 font-semibold">No products found for "<%= searchQuery %>"</p>
+                            <p class="text-xs text-gray-400 mt-1">Try searching by a different name or a valid Product ID.</p>
+                            <a href="/admin/products" class="mt-4 inline-block px-5 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-full hover:bg-emerald-700 transition">View All Products</a>
+                        </div>
+                    <% } %>
 
                     <!-- Product List by Category -->
                     <% for(let key in products){ %>
