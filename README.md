@@ -1,6 +1,6 @@
 # 🛒 Blinkit-Inspired Quick Commerce Platform
 
-A full-stack quick commerce web application inspired by Blinkit, built using React, Node.js, Express.js, and MongoDB.
+AA full-stack quick commerce web application inspired by Blinkit, built using Node.js, Express.js, EJS, and MongoDB.
 
 The platform allows users to browse products, manage carts, place orders securely using Razorpay integration, and provides an admin dashboard for managing products, users, and orders.
 
@@ -49,7 +49,7 @@ The platform allows users to browse products, manage carts, place orders securel
 ## 🛠️ Tech Stack
 
 ### Frontend
-- React.js
+- Ejs
 - JavaScript (ES6+)
 - Tailwind CSS
 - Redux
@@ -73,7 +73,7 @@ The platform allows users to browse products, manage carts, place orders securel
 ```bash
 project-root/
 │
-├── client/        # Frontend React Application
+├── client/        # Frontend  Application
 ├── server/        # Backend Express API
 ├── models/        # MongoDB Models
 ├── routes/        # API Routes
